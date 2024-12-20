@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "digital.fischers.locationshare"
-        minSdk = 24
+        minSdk = 30
         targetSdk = 35
         versionCode = 1
         versionName = "0.0.1"
@@ -84,6 +84,7 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.ramani.maplibre)
     ksp(libs.androidx.room.compiler)
     kapt(libs.hilt.compiler)
     kapt(libs.hilt.android.compiler)
