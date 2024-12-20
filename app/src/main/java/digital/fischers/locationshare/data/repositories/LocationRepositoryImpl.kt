@@ -1,8 +1,10 @@
 package digital.fischers.locationshare.data.repositories
 
+import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.location.Location
 import android.location.LocationManager
 import android.os.Build
 import android.util.Log
@@ -19,17 +21,26 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import digital.fischers.locationshare.broadcastReceivers.LocationReceiver
+import digital.fischers.locationshare.data.database.daos.LocationDao
+import digital.fischers.locationshare.data.database.entities.LocationEntity
+import digital.fischers.locationshare.data.keyValueStorage.Storage
 import digital.fischers.locationshare.domain.repositories.LocationRepository
 import digital.fischers.locationshare.workers.SyncWorker
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.suspendCancellableCoroutine
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 class LocationRepositoryImpl @Inject constructor(
-    val context: Context
+    val context: Context,
+    val locationDao: LocationDao
 ) : LocationRepository {
 
     private val _receivingLocationUpdates = MutableStateFlow(false)
@@ -109,6 +120,33 @@ class LocationRepositoryImpl @Inject constructor(
         return receivingLocationUpdates
     }
 
+    @SuppressLint("MissingPermission")
+    override suspend fun getCurrentLocationSuspend(): Location = suspendCancellableCoroutine { continuation ->
+        locationManager.getCurrentLocation(provider, null, context.mainExecutor) { location ->
+            if (location != null) {
+                continuation.resume(location)
+            } else {
+                continuation.resumeWithException(Exception("Failed to get location"))
+            }
+        }
+    }
+
+    override suspend fun ensureDbHasLocation() {
+        val locations = locationDao.getAllLocationsYoungerThan(Storage(context).getLastSyncTime())
+        if (locations.isEmpty()) {
+            val location = getCurrentLocationSuspend()
+            // Todo: Write extra function to create a location entity
+            val locationEntity = LocationEntity(
+                latitude = location.latitude,
+                longitude = location.longitude,
+                speed = location.speed,
+                timestamp = location.time,
+                more = "accuracy: ${location.accuracy}, altitude: ${location.altitude}, bearing: ${location.bearing}, provider: ${location.provider}"
+            )
+            locationDao.insertLocation(locationEntity)
+        }
+    }
+
     override fun startDataSync() {
         Log.d("LocationRepositoryImpl", "startDataSync")
         val constraints =
@@ -116,7 +154,7 @@ class LocationRepositoryImpl @Inject constructor(
                 .setRequiresBatteryNotLow(true).build()
 
         val sync =
-            PeriodicWorkRequestBuilder<SyncWorker>(1, TimeUnit.HOURS).setConstraints(constraints)
+            PeriodicWorkRequestBuilder<SyncWorker>(15, TimeUnit.MINUTES).setConstraints(constraints)
                 .build()
 
         WorkManager.getInstance(context).enqueueUniquePeriodicWork(

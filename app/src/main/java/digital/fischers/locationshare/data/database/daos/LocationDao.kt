@@ -12,4 +12,7 @@ interface LocationDao {
 
     @Query("SELECT * FROM LocationEntity")
     suspend fun getAllLocations(): List<LocationEntity>
+
+    @Query("SELECT * FROM LocationEntity WHERE timestamp > :timestamp")
+    suspend fun getAllLocationsYoungerThan(timestamp: Long): List<LocationEntity>
 }

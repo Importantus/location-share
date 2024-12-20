@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import digital.fischers.locationshare.data.database.daos.LocationDao
 import digital.fischers.locationshare.data.keyValueStorage.Storage
+import digital.fischers.locationshare.data.remote.APIResult
 import digital.fischers.locationshare.data.remote.LocationApi
 import digital.fischers.locationshare.data.remote.LocationData
 import digital.fischers.locationshare.data.remote.apiCall
@@ -18,21 +19,24 @@ class RemoteRepositoryImpl @Inject constructor(
 ) : RemoteRepository {
     override suspend fun sendLocationData() {
         Log.d("RemoteRepositoryImpl", "sendLocationData")
-        val locations = locationDao.getAllLocations()
-        val lastSync = Storage(context).getLastSyncTime()
+        val locations = locationDao.getAllLocationsYoungerThan(Storage(context).getLastSyncTime())
         val currentAppVersion = context.packageManager.getPackageInfo(context.packageName, 0).versionName
-        locations.filter {
-            it.timestamp > lastSync
-        }.forEach {
+        locations.forEach {
             val locationData = LocationData(
                 name = getDeviceName(context.contentResolver),
                 location = "${it.latitude},${it.longitude}",
                 velocity = it.speed.toString(),
-                more = "${it.timestamp.toString()}, $currentAppVersion, ${it.more}"
+                more = "${it.timestamp}, $currentAppVersion, ${it.more}"
             )
             Log.d("RemoteRepositoryImpl", "sendLocationData: $locationData")
-            apiCall { api.sendLocation(locationData) }
+            val result = apiCall { api.sendLocation(locationData) }
+            when (result) {
+                is APIResult.Error -> TODO()
+                is APIResult.Success -> {
+                    Log.d("RemoteRepositoryImpl", "sendLocationData: Success")
+                    Storage(context).setLastSyncTime(it.timestamp)
+                }
+            }
         }
-        Storage(context).setLastSyncTime(System.currentTimeMillis())
     }
 }

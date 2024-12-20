@@ -34,8 +34,9 @@ class RepositoryModule {
     @Provides
     @Singleton
     fun provideLocationRepository(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        locationDao: LocationDao
     ): LocationRepository {
-        return LocationRepositoryImpl(context)
+        return LocationRepositoryImpl(context, locationDao)
     }
 }
