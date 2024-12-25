@@ -3,6 +3,7 @@ package digital.fischers.locationshare.data.database
 import android.content.Context
 import androidx.room.AutoMigration
 import androidx.room.Database
+import digital.fischers.locationshare.data.database.daos.FriendDao
 import digital.fischers.locationshare.data.database.daos.LocationDao
 import digital.fischers.locationshare.data.database.entities.LocationEntity
 
@@ -14,6 +15,7 @@ import digital.fischers.locationshare.data.database.entities.LocationEntity
 )
 abstract class LocationDatabase : androidx.room.RoomDatabase() {
     abstract fun locationDao(): LocationDao
+    abstract fun friendDao(): FriendDao
 
     companion object {
         @Volatile

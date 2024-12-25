@@ -9,38 +9,44 @@ import android.location.LocationManager
 import android.os.Build
 import android.util.Log
 import androidx.annotation.MainThread
-import androidx.annotation.RequiresApi
+import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.Constraints
 import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import digital.fischers.locationshare.broadcastReceivers.LocationReceiver
 import digital.fischers.locationshare.data.database.daos.LocationDao
-import digital.fischers.locationshare.data.database.entities.LocationEntity
+import digital.fischers.locationshare.data.database.entities.toEntity
 import digital.fischers.locationshare.data.keyValueStorage.Storage
+import digital.fischers.locationshare.data.remote.APIError
+import digital.fischers.locationshare.data.remote.APIResult
+import digital.fischers.locationshare.data.remote.ApiPath
+import digital.fischers.locationshare.data.remote.LocationApi
+import digital.fischers.locationshare.data.remote.apiCall
+import digital.fischers.locationshare.data.remote.appendToServerUrl
+import digital.fischers.locationshare.data.remote.getAccessTokenAndServerUrl
 import digital.fischers.locationshare.domain.repositories.LocationRepository
 import digital.fischers.locationshare.workers.SyncWorker
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.suspendCancellableCoroutine
+import java.util.Date
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 class LocationRepositoryImpl @Inject constructor(
+    private val api: LocationApi,
     val context: Context,
-    val locationDao: LocationDao
+    val locationDao: LocationDao,
 ) : LocationRepository {
 
     private val _receivingLocationUpdates = MutableStateFlow(false)
@@ -131,18 +137,30 @@ class LocationRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun insertLocation(location: Location) {
+        val user = Storage(context).getUser()
+        if (user == null) {
+            Log.d("LocationRepositoryImpl", "User is null")
+            return
+        }
+        val locationEntity = location.toEntity(user.id, user.sessionId, context)
+        locationDao.insertLocation(locationEntity)
+    }
+
+    /**
+     * Checks if the database has a location that is younger than the last sync time. If not, it
+     * gets the current location and inserts it into the database.
+     */
     override suspend fun ensureDbHasLocation() {
         val locations = locationDao.getAllLocationsYoungerThan(Storage(context).getLastSyncTime())
         if (locations.isEmpty()) {
             val location = getCurrentLocationSuspend()
-            // Todo: Write extra function to create a location entity
-            val locationEntity = LocationEntity(
-                latitude = location.latitude,
-                longitude = location.longitude,
-                speed = location.speed,
-                timestamp = location.time,
-                more = "accuracy: ${location.accuracy}, altitude: ${location.altitude}, bearing: ${location.bearing}, provider: ${location.provider}"
-            )
+            val user = Storage(context).getUser()
+            if (user == null) {
+                Log.d("LocationRepositoryImpl", "User is null")
+                return
+            }
+            val locationEntity = location.toEntity(user.id, user.sessionId, context)
             locationDao.insertLocation(locationEntity)
         }
     }
@@ -175,5 +193,34 @@ class LocationRepositoryImpl @Inject constructor(
             .map { workInfos ->
                 workInfos.any { it.state == WorkInfo.State.ENQUEUED || it.state == WorkInfo.State.RUNNING }
             }
+    }
+
+    override suspend fun sendLocationData(): APIResult<Unit> {
+        val (accessToken, serverUrl) = getAccessTokenAndServerUrl(context)
+        if (accessToken == null) {
+            return APIResult.Error(
+                APIError.CustomError(
+                    "No access token found",
+                    401,
+                    "The user has to be logged in to create send location data"
+                )
+            )
+        }
+        val locations = locationDao.getAllLocationsYoungerThan(Storage(context).getLastSyncTime())
+        val result = apiCall {
+            api.createLocation(
+                url = appendToServerUrl(serverUrl, ApiPath.LOCATIONS),
+                token = accessToken,
+                body = locations
+            )
+        }
+        return when (result) {
+            is APIResult.Success -> {
+                Storage(context).setLastSyncTime(Date().time)
+                result
+            }
+
+            else -> result
+        }
     }
 }

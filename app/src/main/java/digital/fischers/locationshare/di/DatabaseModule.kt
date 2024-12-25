@@ -24,5 +24,8 @@ class DatabaseModule {
     }
 
     @Provides
-    fun provideGroupDao(database: LocationDatabase) = database.locationDao()
+    fun provideLocationDao(database: LocationDatabase) = database.locationDao()
+
+    @Provides
+    fun provideFriendDao(database: LocationDatabase) = database.friendDao()
 }
