@@ -6,12 +6,15 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import digital.fischers.locationshare.data.database.daos.FriendDao
 import digital.fischers.locationshare.data.database.daos.LocationDao
 import digital.fischers.locationshare.data.remote.LocationApi
+import digital.fischers.locationshare.data.repositories.FriendRepositoryImpl
 import digital.fischers.locationshare.data.repositories.LocationRepositoryImpl
-import digital.fischers.locationshare.data.repositories.RemoteRepositoryImpl
+import digital.fischers.locationshare.data.repositories.UserRepositoryImpl
+import digital.fischers.locationshare.domain.repositories.FriendRepository
 import digital.fischers.locationshare.domain.repositories.LocationRepository
-import digital.fischers.locationshare.domain.repositories.RemoteRepository
+import digital.fischers.locationshare.domain.repositories.UserRepository
 import javax.inject.Singleton
 
 @Module
@@ -19,24 +22,31 @@ import javax.inject.Singleton
 class RepositoryModule {
     @Provides
     @Singleton
-    fun provideRemoteRepository(
+    fun provideLocationRepository(
         @ApplicationContext context: Context,
-        locationDao: LocationDao,
-        api: LocationApi
-    ): RemoteRepository {
-        return RemoteRepositoryImpl(
-            context = context,
-            locationDao = locationDao,
-            api = api
-        )
+        locationApi: LocationApi,
+        locationDao: LocationDao
+    ): LocationRepository {
+        return LocationRepositoryImpl(locationApi, context, locationDao)
     }
 
     @Provides
     @Singleton
-    fun provideLocationRepository(
+    fun provideFriendRepository(
         @ApplicationContext context: Context,
-        locationDao: LocationDao
-    ): LocationRepository {
-        return LocationRepositoryImpl(context, locationDao)
+        friendDao: FriendDao,
+        locationDao: LocationDao,
+        locationApi: LocationApi
+    ): FriendRepository {
+        return FriendRepositoryImpl(friendDao, locationDao, locationApi, context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(
+        @ApplicationContext context: Context,
+        locationApi: LocationApi
+    ): UserRepository {
+        return UserRepositoryImpl(locationApi, context)
     }
 }

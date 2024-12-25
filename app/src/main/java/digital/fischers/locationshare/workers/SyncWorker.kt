@@ -3,17 +3,11 @@ package digital.fischers.locationshare.workers
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.Service
 import android.content.Context
-import android.content.Intent
 import android.content.pm.ServiceInfo
-import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat.getString
 import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.content.getSystemService
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
@@ -22,14 +16,12 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import digital.fischers.locationshare.R
 import digital.fischers.locationshare.domain.repositories.LocationRepository
-import digital.fischers.locationshare.domain.repositories.RemoteRepository
 
 
 @HiltWorker
 class SyncWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters,
-    private val remoteRepository: RemoteRepository,
     private val locationRepository: LocationRepository
 ) : CoroutineWorker(
     appContext, workerParams
@@ -46,7 +38,7 @@ class SyncWorker @AssistedInject constructor(
             setForeground(getForegroundInfo())
 
             locationRepository.ensureDbHasLocation()
-            remoteRepository.sendLocationData()
+            locationRepository.sendLocationData()
             return Result.success()
         } catch (e: Exception) {
             Log.d("SyncWorker", "Error: ${e.message}, ${e.stackTraceToString()}")
@@ -58,7 +50,7 @@ class SyncWorker @AssistedInject constructor(
         val notification = createNotification()
 
         return ForegroundInfo(
-            1,
+            NOTIFICATION_ID,
             notification,
             ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
         )

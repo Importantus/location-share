@@ -26,7 +26,7 @@ class RemoteModule {
             .build()
 
         return Retrofit.Builder()
-            .baseUrl("https://locations-poc.draculente.eu/")
+            .baseUrl("https://localhost:8080")
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
