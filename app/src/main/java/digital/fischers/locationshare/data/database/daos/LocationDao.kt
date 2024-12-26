@@ -18,7 +18,7 @@ interface LocationDao {
     @Query("SELECT * FROM LocationEntity WHERE timestamp > :timestamp")
     suspend fun getAllLocationsYoungerThan(timestamp: Long): List<LocationEntity>
 
-    @Query("SELECT * FROM LocationEntity WHERE userId = :userId")
+    @Query("SELECT * FROM LocationEntity WHERE userId = :friendId")
     fun getLocationByFriendIdStream(friendId: String): Flow<LocationEntity?>
 
     @Delete
