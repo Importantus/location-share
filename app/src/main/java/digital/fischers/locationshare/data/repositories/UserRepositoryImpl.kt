@@ -162,6 +162,10 @@ class UserRepositoryImpl @Inject constructor(
         return Storage(context).hasSeenOnboarding()
     }
 
+    override fun hasSeenOnboardingStream(): Flow<Boolean> {
+        return Storage(context).hasSeenOnboardingStream()
+    }
+
     override suspend fun setOnboardingSeen(value: Boolean) {
         Storage(context).setOnboardingSeen(value)
     }
