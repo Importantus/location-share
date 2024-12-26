@@ -85,6 +85,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.ramani.maplibre)
+    implementation(libs.accompanist.permissions)
     ksp(libs.androidx.room.compiler)
     kapt(libs.hilt.compiler)
     kapt(libs.hilt.android.compiler)
