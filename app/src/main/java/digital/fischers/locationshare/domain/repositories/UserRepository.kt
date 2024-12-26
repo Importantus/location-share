@@ -20,5 +20,6 @@ interface UserRepository {
     suspend fun updateUser(user: UserEntity): APIResult<UserEntity>
 
     suspend fun hasSeenOnboarding(): Boolean
+    fun hasSeenOnboardingStream(): Flow<Boolean>
     suspend fun setOnboardingSeen(value: Boolean)
 }

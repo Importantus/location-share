@@ -65,6 +65,10 @@ class Storage(context: Context) {
         }.firstOrNull() ?: false
     }
 
+    fun hasSeenOnboardingStream() = dataStore.data.map { preferences ->
+        preferences[ONBOARDING_SEEN] ?: false
+    }
+
     suspend fun setOnboardingSeen(value: Boolean) {
         dataStore.edit { preferences ->
             preferences[ONBOARDING_SEEN] = value
