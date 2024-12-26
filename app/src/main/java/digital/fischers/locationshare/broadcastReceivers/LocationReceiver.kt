@@ -7,10 +7,8 @@ import android.location.Location
 import android.location.LocationManager
 import android.os.Build
 import android.util.Log
-import com.google.android.gms.location.LocationResult
 import dagger.hilt.android.AndroidEntryPoint
-import digital.fischers.locationshare.data.database.LocationDatabase
-import digital.fischers.locationshare.data.database.entities.LocationEntity
+import digital.fischers.locationshare.domain.repositories.LocationRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,7 +18,7 @@ import javax.inject.Inject
 class LocationReceiver : BroadcastReceiver() {
 
     @Inject
-    lateinit var locationDatabase: LocationDatabase
+    lateinit var locationRepository: LocationRepository
 
     override fun onReceive(context: Context, intent: Intent) {
         Log.d("LocationReceiver", "onReceive")
@@ -28,17 +26,10 @@ class LocationReceiver : BroadcastReceiver() {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> intent.getParcelableExtra(LocationManager.KEY_LOCATION_CHANGED, Location::class.java)
             else -> intent.getParcelableExtra<Location>(LocationManager.KEY_LOCATION_CHANGED)
         }
-        Log.d("LocationReceiver", "Location: $location")
-        if (location != null) {
-            val locationEntity = LocationEntity(
-                latitude = location.latitude,
-                longitude = location.longitude,
-                speed = location.speed,
-                timestamp = location.time,
-                more = "accuracy: ${location.accuracy}, altitude: ${location.altitude}, bearing: ${location.bearing}, provider: ${location.provider}"
-            )
-            CoroutineScope(Dispatchers.IO).launch {
-                locationDatabase.locationDao().insertLocation(locationEntity)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            if (location != null) {
+                locationRepository.insertLocation(location)
             }
         }
     }
