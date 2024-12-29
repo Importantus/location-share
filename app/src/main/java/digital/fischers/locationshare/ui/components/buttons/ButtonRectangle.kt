@@ -19,13 +19,13 @@ fun ButtonRectangle(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    minWidth: Int = 160,
+    minWidth: Int = 160
 ) {
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(10.dp))
             .background(MaterialTheme.colorScheme.surfaceContainerLow)
-            .padding(horizontal = 16.dp, vertical = 5.dp)
+            .padding(horizontal = 16.dp, vertical = 10.dp)
             .widthIn(min = minWidth.dp)
             .clickable { onClick() },
         contentAlignment = Alignment.Center
