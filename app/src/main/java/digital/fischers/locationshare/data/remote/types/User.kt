@@ -4,7 +4,8 @@ data class CreateUserRequest(
     val name: String,
     val email: String,
     val username: String,
-    val password: String
+    val password: String,
+    val registration_secret: String? = null
 )
 
 data class CreateUserResponse(
