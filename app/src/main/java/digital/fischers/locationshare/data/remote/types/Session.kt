@@ -4,7 +4,8 @@ data class CreateSessionRequest(
     val name: String,
     val username: String,
     val password: String,
-    val read_only: Boolean = false
+    val read_only: Boolean = false,
+    val writing: Boolean = true
 )
 
 data class CreateSessionResponse(
