@@ -1,8 +1,8 @@
 package digital.fischers.locationshare.data.keyValueStorage
 
 import android.content.Context
-import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -59,19 +59,19 @@ class Storage(context: Context) {
         preferences[SERVER_URL] ?: ""
     }
 
-    suspend fun hasSeenOnboarding(): Boolean {
+    suspend fun getOnboardingStep(): Int {
         return dataStore.data.map { preferences ->
-            preferences[ONBOARDING_SEEN] ?: false
-        }.firstOrNull() ?: false
+            preferences[ONBOARDING_STEP] ?: 0
+        }.firstOrNull() ?: 0
     }
 
-    fun hasSeenOnboardingStream() = dataStore.data.map { preferences ->
-        preferences[ONBOARDING_SEEN] ?: false
+    fun getOnboardingStepStream() = dataStore.data.map { preferences ->
+        preferences[ONBOARDING_STEP] ?: 0
     }
 
-    suspend fun setOnboardingSeen(value: Boolean) {
+    suspend fun setOnboardingStep(step: Int) {
         dataStore.edit { preferences ->
-            preferences[ONBOARDING_SEEN] = value
+            preferences[ONBOARDING_STEP] = step
         }
     }
 
@@ -79,7 +79,6 @@ class Storage(context: Context) {
         private val LAST_SYNC_TIME = longPreferencesKey("last_sync_time")
         private val USER = stringPreferencesKey("user")
         private val SERVER_URL = stringPreferencesKey("server_url")
-        private val ONBOARDING_SEEN = booleanPreferencesKey("onboarding_seen")
-
+        private val ONBOARDING_STEP = intPreferencesKey("onboarding_step")
     }
 }

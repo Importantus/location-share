@@ -6,4 +6,5 @@ enum class ApiPath(val path: String) {
     LOCATIONS("/v1/locations"),
     SHARES("/v1/shares"),
     SHARED_LOCATIONS("/v1/shared-locations"),
+    INFO("/v1/info")
 }

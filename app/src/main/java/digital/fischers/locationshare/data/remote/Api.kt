@@ -6,6 +6,7 @@ import digital.fischers.locationshare.data.remote.types.CreateSessionResponse
 import digital.fischers.locationshare.data.remote.types.CreateShareRequest
 import digital.fischers.locationshare.data.remote.types.CreateUserRequest
 import digital.fischers.locationshare.data.remote.types.CreateUserResponse
+import digital.fischers.locationshare.data.remote.types.Info
 import digital.fischers.locationshare.data.remote.types.Session
 import digital.fischers.locationshare.data.remote.types.Share
 import digital.fischers.locationshare.data.remote.types.UpdateUserRequest
@@ -110,4 +111,9 @@ interface LocationApi {
         @Url url: String,
         @Header("Authorization") token: String,
     ): Response<List<LocationEntity>>
+
+    @GET
+    suspend fun getInfo(
+        @Url url: String
+    ): Response<Info>
 }

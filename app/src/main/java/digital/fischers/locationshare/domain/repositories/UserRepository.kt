@@ -3,6 +3,7 @@ package digital.fischers.locationshare.domain.repositories
 import digital.fischers.locationshare.data.keyValueStorage.entities.UserEntity
 import digital.fischers.locationshare.data.remote.APIResult
 import digital.fischers.locationshare.data.remote.types.CreateUserRequest
+import digital.fischers.locationshare.data.remote.types.Info
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
@@ -21,5 +22,9 @@ interface UserRepository {
 
     suspend fun hasSeenOnboarding(): Boolean
     fun hasSeenOnboardingStream(): Flow<Boolean>
-    suspend fun setOnboardingSeen(value: Boolean)
+    suspend fun getOnboardingStep(): Int
+    fun getOnboardingStepStream(): Flow<Int>
+    suspend fun setOnboardingStep(step: Int)
+
+    suspend fun getServerInfo(serverUrl: String? = null): APIResult<Info>
 }

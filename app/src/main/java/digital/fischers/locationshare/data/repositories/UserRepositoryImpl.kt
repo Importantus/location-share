@@ -12,6 +12,7 @@ import digital.fischers.locationshare.data.remote.appendToServerUrl
 import digital.fischers.locationshare.data.remote.getAccessTokenAndServerUrl
 import digital.fischers.locationshare.data.remote.types.CreateSessionRequest
 import digital.fischers.locationshare.data.remote.types.CreateUserRequest
+import digital.fischers.locationshare.data.remote.types.Info
 import digital.fischers.locationshare.data.remote.types.UpdateUserRequest
 import digital.fischers.locationshare.domain.repositories.UserRepository
 import digital.fischers.locationshare.utils.getDeviceName
@@ -159,15 +160,32 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     override suspend fun hasSeenOnboarding(): Boolean {
-        return Storage(context).hasSeenOnboarding()
+        return Storage(context).getOnboardingStep() >= 5
     }
 
     override fun hasSeenOnboardingStream(): Flow<Boolean> {
-        return Storage(context).hasSeenOnboardingStream()
+        return Storage(context).getOnboardingStepStream().map {
+            it >= 5
+        }
     }
 
-    override suspend fun setOnboardingSeen(value: Boolean) {
-        Storage(context).setOnboardingSeen(value)
+    override suspend fun getOnboardingStep(): Int {
+        return Storage(context).getOnboardingStep()
     }
 
+    override fun getOnboardingStepStream(): Flow<Int> {
+        return Storage(context).getOnboardingStepStream()
+    }
+
+    override suspend fun setOnboardingStep(step: Int) {
+        return Storage(context).setOnboardingStep(step)
+    }
+
+    override suspend fun getServerInfo(serverUrl: String?): APIResult<Info> {
+        return apiCall {
+            api.getInfo(
+                url = appendToServerUrl(serverUrl ?: Storage(context).getServerUrl(), ApiPath.INFO)
+            )
+        }
+    }
 }
