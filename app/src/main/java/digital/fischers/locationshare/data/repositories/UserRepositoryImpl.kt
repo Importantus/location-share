@@ -33,6 +33,10 @@ class UserRepositoryImpl @Inject constructor(
         return Storage(context).getUserStream().map { it }
     }
 
+    override suspend fun getUser(): UserEntity? {
+        return Storage(context).getUser()
+    }
+
     override suspend fun login(username: String, password: String): APIResult<UserEntity> {
         val serverUrl = Storage(context).getServerUrl()
         val loginResponse = apiCall {

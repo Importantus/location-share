@@ -11,3 +11,13 @@ data class Friend(
     val userShareId: String?,
     val location: Flow<LocationEntity?>?
 )
+
+data class FriendUIState(
+    val id: String,
+    val name: String,
+    val username: String,
+    val theirShareId: String?,
+    val userShareId: String?,
+    val distance: Float?,
+    val location: LocationEntity?
+)

@@ -1,5 +1,7 @@
 package digital.fischers.locationshare.data.remote.types
 
+import java.util.Date
+
 data class CreateSessionRequest(
     val name: String,
     val username: String,
@@ -19,6 +21,6 @@ data class Session(
     val name: String,
     val writing: Boolean,
     val read_only: Boolean,
-    val created_at: Long,
-    val updated_at: Long
+    val created_at: Date,
+    val updated_at: Date
 )

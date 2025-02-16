@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Location Share</string>
+    <string name="ok">OK</string>
+    <string name="network_error">Syncfehler</string>
+    <string name="error_400">Der Server konnte die Anfrage nicht verstehen. Überprüfe deine Eingaben.</string>
+    <string name="error_401">Deine Anmeldedaten sind falsch. Du hast hier keinen Zugang.</string>
+    <string name="error_403">Du hast nicht die Berechtigung, hierauf zuzugreifen.</string>
+    <string name="error_404">Ups. Die Daten können nicht gefunden werden.</string>
+    <string name="error_500">Ups. Der Server ist in einen Fehler gelaufen. Sollte das wieder vorkommen, kontaktiere deinen Admin!</string>
+    <string name="error_generic">Es gab einen Fehler beim Zugriff auf den Server. Versuch es nochmal oder kontaktiere deinen Admin!</string>
+    <string name="network_error_desc">Du scheinst eine instabile Netzwerkverbindung zu haben. Bitte versuche es später nochmal.</string>
+    <string name="unknown_error_desc">Irgendwas schlimmes ist passiert. Informiere deinen Admin, wenn es nochmal passiert!</string>
+    <string name="minutes_ago">vor %1$d Minuten</string>
+    <string name="time_format">um %1$s Uhr</string>
+    <string name="date_format">am %1$s</string>
+    <string name="last_sync">Letzte Synchronisierung:</string>
+    <string name="yesterday_time_format">Gestern um %1$s Uhr</string>
+    <string name="just_now">gerade eben</string>
+</resources>

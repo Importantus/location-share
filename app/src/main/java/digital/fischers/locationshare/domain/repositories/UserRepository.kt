@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.Flow
 interface UserRepository {
     fun isLoggedInStream(): Flow<Boolean>
     fun getUserStream(): Flow<UserEntity?>
+    suspend fun getUser(): UserEntity?
 
     suspend fun login(username: String, password: String): APIResult<UserEntity>
     suspend fun logout()

@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "digital.fischers.locationshare"
-        minSdk = 30
+        minSdk = 31
         targetSdk = 35
         versionCode = 1
         versionName = "0.0.1"

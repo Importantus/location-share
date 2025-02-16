@@ -27,4 +27,7 @@ interface FriendDao {
 
     @Upsert
     suspend fun upsert(friend: FriendEntity)
+
+    @Query("DELETE FROM FriendEntity WHERE id = :id")
+    suspend fun delete(id: String)
 }

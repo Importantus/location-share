@@ -13,6 +13,7 @@ sealed class Screen(val route: String, val deepLinkPath: String? = null) {
     data object Welcome : Screen("welcome")
     data object Permissions : Screen("permissions")
     data object SetServer : Screen("setServer")
+    data object AddShare : Screen("addShare")
 }
 
 @Composable
@@ -57,4 +58,7 @@ class LocationShareAppState(
         navigateBackstackAware(Screen.SetServer.route, Screen.SetServer)
     }
 
+    fun navigateToAddShare() {
+        navigateBackstackAware(Screen.AddShare.route, Screen.AddShare)
+    }
 }

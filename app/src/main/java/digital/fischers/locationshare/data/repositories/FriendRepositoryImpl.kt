@@ -1,9 +1,11 @@
 package digital.fischers.locationshare.data.repositories
 
 import android.content.Context
+import android.util.Log
 import digital.fischers.locationshare.data.database.daos.FriendDao
 import digital.fischers.locationshare.data.database.daos.LocationDao
 import digital.fischers.locationshare.data.database.entities.FriendEntity
+import digital.fischers.locationshare.data.keyValueStorage.Storage
 import digital.fischers.locationshare.data.remote.APIError
 import digital.fischers.locationshare.data.remote.APIResult
 import digital.fischers.locationshare.data.remote.ApiPath
@@ -135,6 +137,8 @@ class FriendRepositoryImpl @Inject constructor(
             )
         }
 
+        val user = Storage(context).getUser()
+
         val allShares = apiCall {
             api.getExistingShares(
                 url = appendToServerUrl(serverUrl, ApiPath.SHARES),
@@ -146,12 +150,22 @@ class FriendRepositoryImpl @Inject constructor(
             is APIResult.Success -> {
                 when (val allUsers = getAllUsersOfServer()) {
                     is APIResult.Success -> {
+                        Log.d("FriendRepositoryImpl", "All users: ${allUsers.data}")
+                        Log.d("FriendRepositoryImpl", "All shares: ${allShares.data}")
+                        Log.d("FriendRepositoryImpl", "User: ${user?.id}")
 
-                        allUsers.data.filter {
+                        val (friendsToKeep, friendsToDelete) = allUsers.data.partition {
+                            Log.d(
+                                "FriendRepositoryImpl",
+                                it.id + " vs " + user?.id + " = " + (it.id == user?.id)
+                            )
                             allShares.data.any { share ->
-                                share.shared_by == it.id || share.shared_with == it.id
-                            }
-                        }.map { friend ->
+                                (share.shared_by == it.id && share.shared_with == user?.id) || (share.shared_with == it.id && share.shared_by == user?.id)
+                            } && it.id != user?.id
+                        }
+
+                        friendsToKeep.map { friend ->
+                            Log.d("FriendRepositoryImpl", "Friend: $friend")
                             FriendEntity(
                                 id = friend.id,
                                 name = friend.name,
@@ -167,16 +181,25 @@ class FriendRepositoryImpl @Inject constructor(
                             friendDao.upsert(it)
                         }
 
+                        friendsToDelete.forEach { friend ->
+                            friendDao.delete(friend.id)
+                        }
+
                         APIResult.Success(Unit)
                     }
 
                     is APIResult.Error -> {
+                        Log.e(
+                            "FriendRepositoryImpl",
+                            "Error syncing friends: ${allUsers.exception}"
+                        )
                         APIResult.Error(exception = allUsers.exception)
                     }
                 }
             }
 
             is APIResult.Error -> {
+                Log.e("FriendRepositoryImpl", "Error syncing friends: ${allShares.exception}")
                 APIResult.Error(exception = allShares.exception)
             }
         }

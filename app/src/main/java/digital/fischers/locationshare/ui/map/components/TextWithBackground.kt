@@ -1,4 +1,4 @@
-package digital.fischers.locationshare.ui
+package digital.fischers.locationshare.ui.map.components
 
 import android.graphics.PointF
 import androidx.compose.runtime.Composable

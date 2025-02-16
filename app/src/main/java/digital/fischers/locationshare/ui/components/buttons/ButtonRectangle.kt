@@ -11,25 +11,45 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun ButtonRectangle(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    minWidth: Int = 160
+    layout: ButtonLayout = ButtonLayout.MEDIUM,
+    backgroundColor: Color = MaterialTheme.colorScheme.surfaceContainerLow,
+    minWidth: Int = 160,
+    enabled: Boolean = true
 ) {
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(10.dp))
-            .background(MaterialTheme.colorScheme.surfaceContainerLow)
-            .padding(horizontal = 16.dp, vertical = 10.dp)
+            .background(backgroundColor)
+            .clickable(enabled) { onClick() }
+            .padding(horizontal = layout.paddingX.dp, vertical = layout.paddingY.dp)
             .widthIn(min = minWidth.dp)
-            .clickable { onClick() },
+            .alpha(if (enabled) 1f else 0.5f),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = text, color = MaterialTheme.colorScheme.onSurface)
+        Text(
+            text = text,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = TextStyle(
+                fontSize = layout.textSize.sp
+            )
+        )
     }
+}
+
+enum class ButtonLayout(val paddingX: Int, val paddingY: Int, val textSize: Int) {
+    SMALL(5, 8, 14),
+    MEDIUM(16, 10, 16),
+    LARGE(24, 14, 18)
 }

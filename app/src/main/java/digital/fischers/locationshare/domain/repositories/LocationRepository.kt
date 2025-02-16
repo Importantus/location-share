@@ -9,6 +9,7 @@ interface LocationRepository {
     fun stopLocationUpdates()
     fun areLocationUpdatesEnabled(): Flow<Boolean>
     suspend fun getCurrentLocationSuspend(): Location
+    fun getCurrentLocation(): Flow<Location>
     suspend fun ensureDbHasLocation()
     suspend fun insertLocation(location: Location)
 
