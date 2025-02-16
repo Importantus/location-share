@@ -12,9 +12,12 @@ import digital.fischers.locationshare.data.remote.LocationApi
 import digital.fischers.locationshare.data.repositories.FriendRepositoryImpl
 import digital.fischers.locationshare.data.repositories.LocationRepositoryImpl
 import digital.fischers.locationshare.data.repositories.UserRepositoryImpl
+import digital.fischers.locationshare.data.repositories.WebSocketRepositoryImpl
 import digital.fischers.locationshare.domain.repositories.FriendRepository
 import digital.fischers.locationshare.domain.repositories.LocationRepository
 import digital.fischers.locationshare.domain.repositories.UserRepository
+import digital.fischers.locationshare.domain.repositories.WebsocketRepository
+import okhttp3.OkHttpClient
 import javax.inject.Singleton
 
 @Module
@@ -48,5 +51,16 @@ class RepositoryModule {
         locationApi: LocationApi
     ): UserRepository {
         return UserRepositoryImpl(locationApi, context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWebsocketRepository(
+        @ApplicationContext context: Context,
+        okHttpClient: OkHttpClient,
+        friendRepository: FriendRepository,
+        locationDao: LocationDao,
+    ): WebsocketRepository {
+        return WebSocketRepositoryImpl(okHttpClient, context, friendRepository, locationDao)
     }
 }

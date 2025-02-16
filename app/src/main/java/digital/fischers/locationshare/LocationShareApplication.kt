@@ -34,7 +34,7 @@ class LocationShareApplication : Application(), Configuration.Provider {
                 .setRequiresBatteryNotLow(true).build()
 
         val sync =
-            PeriodicWorkRequestBuilder<SyncWorker>(30, TimeUnit.MINUTES).setConstraints(constraints)
+            PeriodicWorkRequestBuilder<SyncWorker>(15, TimeUnit.MINUTES).setConstraints(constraints)
                 .build()
 
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(

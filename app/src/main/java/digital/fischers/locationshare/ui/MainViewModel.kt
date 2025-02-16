@@ -14,6 +14,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import digital.fischers.locationshare.domain.repositories.FriendRepository
 import digital.fischers.locationshare.domain.repositories.LocationRepository
 import digital.fischers.locationshare.domain.repositories.UserRepository
+import digital.fischers.locationshare.domain.repositories.WebsocketRepository
 import digital.fischers.locationshare.domain.types.FriendUIState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +24,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import org.maplibre.android.geometry.LatLng
 import org.ramani.compose.CameraPosition
 import javax.inject.Inject
@@ -32,7 +34,8 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val locationRepository: LocationRepository,
     private val friendRepository: FriendRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val websocketRepository: WebsocketRepository
 ) : ViewModel() {
     val hasSeenOnboarding = userRepository.hasSeenOnboardingStream().stateIn(
         scope = viewModelScope,
@@ -56,6 +59,17 @@ class MainViewModel @Inject constructor(
     private val _locationPermissionState = MutableStateFlow<PermissionState?>(null)
     private val locationPermissionState: StateFlow<PermissionState?> = _locationPermissionState
 
+
+    init {
+        viewModelScope.launch {
+            websocketRepository.connect()
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        websocketRepository.disconnect()
+    }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val userLocation = locationPermissionState

@@ -32,4 +32,11 @@ class RemoteModule {
             .build()
             .create(LocationApi::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(): OkHttpClient =
+        OkHttpClient.Builder()
+            .retryOnConnectionFailure(true)
+            .build()
 }

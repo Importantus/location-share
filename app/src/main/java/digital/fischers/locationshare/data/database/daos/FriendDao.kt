@@ -19,6 +19,9 @@ interface FriendDao {
     @Query("SELECT * FROM FriendEntity WHERE id = :id")
     fun getFriendByIdStream(id: String): Flow<FriendEntity>
 
+    @Query("SELECT * FROM FriendEntity WHERE theirShareId = :shareId OR userShareId = :shareId LIMIT 1")
+    fun getFriendByShareId(shareId: String): Flow<FriendEntity>
+
     @Update
     suspend fun update(friend: FriendEntity)
 
