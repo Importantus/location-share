@@ -50,11 +50,7 @@ jobs:
         run: mv ${{ steps.releaseApk.outputs.apkfile }} location-share-${{ github.ref_name }}.apk
 
       - name: Release
-        uses: "marvinpinto/action-automatic-releases@latest"
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: ${{ github.ref_name }}
-          draft: true
-          title: ${{ github.ref_name }}
-          files: |
-            location-share-${{ github.ref_name }}.apk
+          files: location-share-${{ github.ref_name }}.apk
