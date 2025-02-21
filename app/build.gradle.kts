@@ -5,6 +5,7 @@ plugins {
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
     id("com.google.devtools.ksp")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -86,6 +87,11 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.ramani.maplibre)
     implementation(libs.accompanist.permissions)
+
+    //|||||||||||||||||||||||||||||||||||||
+    implementation(libs.firebase.messaging) // <-- The enemy! To be replaced with unified push eventually
+    //|||||||||||||||||||||||||||||||||||||
+
     ksp(libs.androidx.room.compiler)
     kapt(libs.hilt.compiler)
     kapt(libs.hilt.android.compiler)

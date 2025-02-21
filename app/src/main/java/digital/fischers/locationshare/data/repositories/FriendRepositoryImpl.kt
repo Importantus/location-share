@@ -15,6 +15,7 @@ import digital.fischers.locationshare.data.remote.appendToServerUrl
 import digital.fischers.locationshare.data.remote.getAccessTokenAndServerUrl
 import digital.fischers.locationshare.data.remote.types.CreateShareRequest
 import digital.fischers.locationshare.data.remote.types.CreateUserResponse
+import digital.fischers.locationshare.data.remote.types.WakeUpRequest
 import digital.fischers.locationshare.domain.repositories.FriendRepository
 import digital.fischers.locationshare.domain.types.Friend
 import kotlinx.coroutines.flow.Flow
@@ -122,7 +123,26 @@ class FriendRepositoryImpl @Inject constructor(
     }
 
     override suspend fun sendWakeUp(friendId: String): APIResult<Unit> {
-        TODO("Not yet implemented")
+        val (accessToken, serverUrl) = getAccessTokenAndServerUrl(context)
+        if (accessToken == null) {
+            return APIResult.Error(
+                APIError.CustomError(
+                    "No access token found",
+                    401,
+                    "The user has to be logged in to send a wake up"
+                )
+            )
+        }
+
+        return apiCall {
+            api.wakeUp(
+                url = appendToServerUrl(serverUrl, ApiPath.WAKE_UP),
+                token = accessToken,
+                body = WakeUpRequest(
+                    userId = friendId
+                )
+            )
+        }
     }
 
     override suspend fun syncFriends(): APIResult<Unit> {

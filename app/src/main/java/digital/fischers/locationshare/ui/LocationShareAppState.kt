@@ -14,6 +14,13 @@ sealed class Screen(val route: String, val deepLinkPath: String? = null) {
     data object Permissions : Screen("permissions")
     data object SetServer : Screen("setServer")
     data object AddShare : Screen("addShare")
+    data object Friend : Screen("friend/{$ARG_USER_ID}") {
+        fun createRoute(userId: String) = "friend/$userId"
+    }
+
+    companion object {
+        const val ARG_USER_ID = "userId"
+    }
 }
 
 @Composable
@@ -60,5 +67,13 @@ class LocationShareAppState(
 
     fun navigateToAddShare() {
         navigateBackstackAware(Screen.AddShare.route, Screen.AddShare)
+    }
+
+    fun navigateToFriend(userId: String) {
+        navigateBackstackAware(Screen.Friend.createRoute(userId), Screen.Friend)
+    }
+
+    fun navigateBack() {
+        navController.popBackStack()
     }
 }

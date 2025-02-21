@@ -21,3 +21,7 @@ data class UpdateUserRequest(
     val username: String
 )
 
+data class WakeUpRequest(
+    val userId: String
+)
+

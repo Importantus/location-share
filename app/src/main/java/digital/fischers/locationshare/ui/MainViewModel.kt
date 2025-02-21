@@ -1,10 +1,13 @@
 package digital.fischers.locationshare.ui
 
+import android.location.Location
 import android.location.Location.distanceBetween
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.key.type
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -16,10 +19,12 @@ import digital.fischers.locationshare.domain.repositories.LocationRepository
 import digital.fischers.locationshare.domain.repositories.UserRepository
 import digital.fischers.locationshare.domain.repositories.WebsocketRepository
 import digital.fischers.locationshare.domain.types.FriendUIState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -28,6 +33,8 @@ import kotlinx.coroutines.launch
 import org.maplibre.android.geometry.LatLng
 import org.ramani.compose.CameraPosition
 import javax.inject.Inject
+import kotlin.text.firstOrNull
+import kotlin.text.toDouble
 
 @OptIn(ExperimentalPermissionsApi::class)
 @HiltViewModel
@@ -49,20 +56,31 @@ class MainViewModel @Inject constructor(
         initialValue = false
     )
 
-    private val zoom = MutableStateFlow(15.0f)
+    private var _zoom = MutableStateFlow(15.0f)
+    private val zoom = _zoom.asStateFlow()
 
     private val bearing = MutableStateFlow(0.0)
 
     private val pan = MutableStateFlow(Offset.Zero)
 
+    private val _trackTarget: MutableStateFlow<TrackTarget> = MutableStateFlow(
+        TrackTarget(
+            type = TrackTargetType.USER_LOCATION
+        )
+    )
+    private val trackTarget = _trackTarget.asStateFlow()
+
 
     private val _locationPermissionState = MutableStateFlow<PermissionState?>(null)
-    private val locationPermissionState: StateFlow<PermissionState?> = _locationPermissionState
+    private val locationPermissionState: StateFlow<PermissionState?> = _locationPermissionState.asStateFlow()
 
 
     init {
-        viewModelScope.launch {
-            websocketRepository.connect()
+        viewModelScope.launch(Dispatchers.IO) {
+            if(userRepository.isLoggedIn()) {
+                websocketRepository.connect()
+            }
+            userRepository.registerFcmToken()
         }
     }
 
@@ -116,7 +134,7 @@ class MainViewModel @Inject constructor(
                     theirShareId = friend.theirShareId,
                     userShareId = friend.userShareId,
                     distance = distance,
-                    location = friendLocation
+                    location = if (friend.theirShareId != null) friendLocation else null
                 )
             }
         }.let { combinedFlows ->
@@ -134,36 +152,46 @@ class MainViewModel @Inject constructor(
         return results[0]
     }
 
-    private var trackTarget by mutableStateOf(
-        TrackTarget(
-            type = TrackTargetType.USER_LOCATION
-        )
-    )
-
     val cameraPosition = combine(
         userLocation,
         friends,
         zoom,
         pan,
-        bearing
-    ) { location, friendsList, zoom, panOffset, bearing ->
+        bearing,
+        trackTarget
+    ) { values ->
+        val location = values[0] as? Location
+        val friendsList = values[1] as List<FriendUIState>
+        val zoomValue = values[2] as Float
+        val panOffset = values[3] as Offset
+        val bearingValue = values[4] as Double
+        val trackTargetValue = values[5] as TrackTarget
         // Logic to determine the camera position based on user location and friends list
         CameraPosition(
-            target = when (trackTarget.type) {
-                TrackTargetType.USER_LOCATION -> location?.let { LatLng(it.latitude, it.longitude) }
-                    ?: friendsList.firstOrNull()
-                        ?.location?.let { LatLng(it.latitude, it.longitude) } ?: LatLng(
-                        53.866670,
-                        10.684946
-                    )
+            target = when (trackTargetValue.type) {
+                TrackTargetType.USER_LOCATION -> {
+                    Log.d("MainViewModel", "Tracking User Location")
+                    location?.let { LatLng(it.latitude, it.longitude) }
+                        ?: friendsList.firstOrNull()
+                            ?.location?.let { LatLng(it.latitude, it.longitude) } ?: LatLng(
+                            53.866670,
+                            10.684946
+                        )
+                }
 
-                TrackTargetType.FRIEND -> friendsList.firstOrNull { it.id == trackTarget.value }
-                    ?.location?.let { LatLng(it.latitude, it.longitude) }
+                TrackTargetType.FRIEND -> {
+                    Log.d("MainViewModel", "Tracking Friend: ${trackTargetValue.value}")
+                    friendsList.firstOrNull { it.id == trackTargetValue.value }
+                        ?.location?.let {
+                            Log.d("MainViewModel", "Friend location: ${it.latitude}, ${it.longitude}")
+                            LatLng(it.latitude, it.longitude)
+                        }
+                }
 
                 TrackTargetType.MANUAL -> null
             },
-            zoom = zoom.toDouble(),
-            bearing = bearing,
+            zoom = zoomValue.toDouble(),
+            bearing = bearingValue,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -184,7 +212,7 @@ class MainViewModel @Inject constructor(
 
     fun setCameraToTrackFriend(friendId: String) {
         pan.value = Offset.Zero
-        trackTarget = TrackTarget(
+        _trackTarget.value = TrackTarget(
             type = TrackTargetType.FRIEND,
             value = friendId
         )
@@ -192,19 +220,20 @@ class MainViewModel @Inject constructor(
 
     fun setCameraToTrackUserLocation() {
         pan.value = Offset.Zero
-        trackTarget = TrackTarget(
+        Log.d("MainViewModel", "Setting to User Location")
+        _trackTarget.value = TrackTarget(
             type = TrackTargetType.USER_LOCATION
         )
     }
 
     fun setCameraToManual() {
-        trackTarget = TrackTarget(
+        _trackTarget.value = TrackTarget(
             type = TrackTargetType.MANUAL
         )
     }
 
     fun updateZoom(newZoom: Float) {
-        zoom.value *= newZoom
+        _zoom.value *= newZoom
     }
 
     fun updatePan(newPan: Offset) {

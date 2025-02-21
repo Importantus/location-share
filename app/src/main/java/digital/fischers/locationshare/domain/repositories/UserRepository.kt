@@ -8,12 +8,15 @@ import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
     fun isLoggedInStream(): Flow<Boolean>
+    suspend fun isLoggedIn(): Boolean
     fun getUserStream(): Flow<UserEntity?>
     suspend fun getUser(): UserEntity?
 
     suspend fun login(username: String, password: String): APIResult<UserEntity>
     suspend fun logout()
     suspend fun register(createUserRequest: CreateUserRequest): APIResult<UserEntity>
+
+    suspend fun registerFcmToken(): APIResult<Unit>
 
     suspend fun setServerUrl(serverUrl: String)
     suspend fun getServerUrl(): String

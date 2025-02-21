@@ -11,6 +11,7 @@ interface LocationRepository {
     suspend fun getCurrentLocationSuspend(): Location
     fun getCurrentLocation(): Flow<Location>
     suspend fun ensureDbHasLocation()
+    suspend fun fillDBWithCurrentLocation()
     suspend fun insertLocation(location: Location)
 
     suspend fun sendLocationData(): APIResult<Unit>

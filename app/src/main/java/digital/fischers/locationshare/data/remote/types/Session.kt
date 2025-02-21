@@ -24,3 +24,7 @@ data class Session(
     val created_at: Date,
     val updated_at: Date
 )
+
+data class RegisterFCMTokenRequest(
+    val token: String
+)

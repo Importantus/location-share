@@ -13,10 +13,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
+import digital.fischers.locationshare.ui.friend.FriendScreen
 import digital.fischers.locationshare.ui.home.HomeScreen
 import digital.fischers.locationshare.ui.map.MapWrapper
 import digital.fischers.locationshare.ui.onboarding.OnboardingScreen
 import digital.fischers.locationshare.ui.share.AddShareScreen
+import kotlinx.coroutines.flow.map
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -62,14 +64,19 @@ fun LocationShareApp(
                     if (it) Screen.Home.route else Screen.Onboarding.route
                 }) {
                 composable(Screen.Home.route) {
-                    viewModel.setCameraToTrackUserLocation()
+                    LaunchedEffect(Unit) {
+                        viewModel.setCameraToTrackUserLocation()
+                    }
                     HomeScreen(
                         friends = viewModel.friends,
                         onFriendAddNavigation = {
                             appState.navigateToAddShare()
                         },
                         onSearchNavigation = {},
-                        onFriendNavigation = { friendId -> }
+                        onFriendNavigation = { friendId ->
+                            viewModel.setCameraToTrackFriend(friendId)
+                            appState.navigateToFriend(friendId)
+                        }
                     )
                 }
                 composable(Screen.Onboarding.route) {
@@ -79,8 +86,25 @@ fun LocationShareApp(
                 }
                 composable(Screen.AddShare.route) {
                     AddShareScreen(
-                        onBackNavigation = { appState.navigateHome() }
+                        onBackNavigation = { appState.navigateBack() }
                     )
+                }
+                composable(Screen.Friend.route) {
+                    val userId = it.arguments?.getString(Screen.ARG_USER_ID)
+                    if (userId != null) {
+                        FriendScreen(
+                            onBackNavigation = {
+                                viewModel.setCameraToTrackUserLocation()
+                                appState.navigateHome()
+                            },
+                            onAddShareNavigation = {
+                                appState.navigateToAddShare()
+                            },
+                            friendFlow = viewModel.friends.map { friends ->
+                                friends.first { friend -> friend.id == userId }
+                            }
+                        )
+                    }
                 }
             }
         }

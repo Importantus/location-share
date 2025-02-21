@@ -16,6 +16,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import digital.fischers.locationshare.R
 import digital.fischers.locationshare.domain.repositories.LocationRepository
+import kotlinx.coroutines.flow.firstOrNull
 
 
 @HiltWorker
@@ -34,11 +35,12 @@ class SyncWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         try {
-            // Todo: Only set foreground if the current location has to be fetched
-            setForeground(getForegroundInfo())
-
-            locationRepository.ensureDbHasLocation()
-            locationRepository.sendLocationData()
+            if(locationRepository.areLocationUpdatesEnabled().firstOrNull() === true) {
+                // Todo: Only set foreground if the current location has to be fetched
+                setForeground(getForegroundInfo())
+                locationRepository.ensureDbHasLocation()
+                locationRepository.sendLocationData()
+            }
             return Result.success()
         } catch (e: Exception) {
             Log.d("SyncWorker", "Error: ${e.message}, ${e.stackTraceToString()}")

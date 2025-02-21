@@ -7,9 +7,11 @@ import digital.fischers.locationshare.data.remote.types.CreateShareRequest
 import digital.fischers.locationshare.data.remote.types.CreateUserRequest
 import digital.fischers.locationshare.data.remote.types.CreateUserResponse
 import digital.fischers.locationshare.data.remote.types.Info
+import digital.fischers.locationshare.data.remote.types.RegisterFCMTokenRequest
 import digital.fischers.locationshare.data.remote.types.Session
 import digital.fischers.locationshare.data.remote.types.Share
 import digital.fischers.locationshare.data.remote.types.UpdateUserRequest
+import digital.fischers.locationshare.data.remote.types.WakeUpRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -80,7 +82,7 @@ interface LocationApi {
     suspend fun deleteShare(
         @Url url: String,
         @Header("Authorization") token: String,
-        @Path("id") id: String
+        @Query("id") id: String
     ): Response<Unit>
 
     @POST
@@ -116,4 +118,18 @@ interface LocationApi {
     suspend fun getInfo(
         @Url url: String
     ): Response<Info>
+
+    @POST
+    suspend fun registerFCMToken(
+        @Url url: String,
+        @Header("Authorization") token: String,
+        @Body body: RegisterFCMTokenRequest
+    ): Response<Unit>
+
+    @POST
+    suspend fun wakeUp(
+        @Url url: String,
+        @Header("Authorization") token: String,
+        @Body body: WakeUpRequest
+    ): Response<Unit>
 }

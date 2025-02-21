@@ -205,7 +205,7 @@ fun AddShareScreen(
                                 coroutineScope.launch {
                                     viewModel.createShare()
                                 }.invokeOnCompletion {
-                                    if (viewModel.createShareError != null) {
+                                    if (viewModel.createShareError == null) {
                                         onBackNavigation()
                                     }
                                 }

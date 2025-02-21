@@ -1,6 +1,9 @@
 package digital.fischers.locationshare.data.repositories
 
 import android.content.Context
+import androidx.work.await
+import com.google.android.gms.tasks.Tasks
+import com.google.firebase.messaging.FirebaseMessaging
 import digital.fischers.locationshare.data.keyValueStorage.Storage
 import digital.fischers.locationshare.data.keyValueStorage.entities.UserEntity
 import digital.fischers.locationshare.data.remote.APIError
@@ -13,11 +16,15 @@ import digital.fischers.locationshare.data.remote.getAccessTokenAndServerUrl
 import digital.fischers.locationshare.data.remote.types.CreateSessionRequest
 import digital.fischers.locationshare.data.remote.types.CreateUserRequest
 import digital.fischers.locationshare.data.remote.types.Info
+import digital.fischers.locationshare.data.remote.types.RegisterFCMTokenRequest
 import digital.fischers.locationshare.data.remote.types.UpdateUserRequest
 import digital.fischers.locationshare.domain.repositories.UserRepository
 import digital.fischers.locationshare.utils.getDeviceName
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
@@ -27,6 +34,11 @@ class UserRepositoryImpl @Inject constructor(
     override fun isLoggedInStream(): Flow<Boolean> {
         return Storage(context).getUserStream()
             .map { it != null && it.sessionId.isNotEmpty() && it.id.isNotEmpty() && it.authToken.isNotEmpty() }
+    }
+
+    override suspend fun isLoggedIn(): Boolean {
+        val user = Storage(context).getUser()
+        return user != null && user.sessionId.isNotEmpty() && user.id.isNotEmpty() && user.authToken.isNotEmpty()
     }
 
     override fun getUserStream(): Flow<UserEntity?> {
@@ -44,6 +56,7 @@ class UserRepositoryImpl @Inject constructor(
                 url = appendToServerUrl(serverUrl, ApiPath.SESSIONS),
                 body = CreateSessionRequest(
                     name = getDeviceName(context.contentResolver),
+                    writing = true,
                     username = username,
                     password = password
                 )
@@ -63,6 +76,7 @@ class UserRepositoryImpl @Inject constructor(
                 Storage(context).setUser(
                     user
                 )
+                registerFcmToken()
                 APIResult.Success(user)
             }
 
@@ -102,6 +116,50 @@ class UserRepositoryImpl @Inject constructor(
             is APIResult.Error -> {
                 APIResult.Error(exception = registerResponse.exception)
             }
+        }
+    }
+
+    override suspend fun registerFcmToken(): APIResult<Unit> {
+        val token: String? = withContext(Dispatchers.IO) {
+            try {
+                FirebaseMessaging.getInstance().token.await()
+            } catch (e: Exception) {
+                // Handle the exception, e.g., log it
+                println("Error getting FCM token: ${e.message}")
+                null
+            }
+        }
+
+        if(token == null) {
+            return APIResult.Error(
+                APIError.CustomError(
+                    "No FCM token found",
+                    401,
+                    "The user has to be logged in to register an fcm token"
+                )
+            )
+        }
+
+        val (accessToken, serverUrl) = getAccessTokenAndServerUrl(context)
+
+        if (accessToken == null) {
+            return APIResult.Error(
+                APIError.CustomError(
+                    "No access token found",
+                    401,
+                    "The user has to be logged in to register an fcm token"
+                )
+            )
+        }
+
+        return apiCall {
+            api.registerFCMToken(
+                url = appendToServerUrl(serverUrl, ApiPath.REGISTER_FCM_TOKEN),
+                token = accessToken,
+                body = RegisterFCMTokenRequest(
+                    token = token
+                )
+            )
         }
     }
 

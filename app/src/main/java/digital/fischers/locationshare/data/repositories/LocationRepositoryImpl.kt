@@ -168,14 +168,24 @@ class LocationRepositoryImpl @Inject constructor(
             user?.id ?: ""
         )
         if (locations.isEmpty()) {
-            val location = getCurrentLocationSuspend()
-            if (user == null) {
-                Log.d("LocationRepositoryImpl", "User is null")
-                return
-            }
-            val locationEntity = location.toEntity(user.id, user.sessionId, context)
-            locationDao.insertLocation(locationEntity)
+            fillDBWithCurrentLocation()
         }
+    }
+
+    /**
+     * Gets the current location and adds it to the db
+     */
+    @RequiresPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+    override suspend fun fillDBWithCurrentLocation() {
+        val user = Storage(context).getUser()
+
+        val location = getCurrentLocationSuspend()
+        if (user == null) {
+            Log.d("LocationRepositoryImpl", "User is null")
+            return
+        }
+        val locationEntity = location.toEntity(user.id, user.sessionId, context)
+        locationDao.insertLocation(locationEntity)
     }
 
     override fun startDataSync() {
