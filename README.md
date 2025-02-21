@@ -5,7 +5,7 @@
 <p align="center">Simple and reliable location sharing.</p>
 
 <p align="center">
-<img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/Importantus/location-share/build.yaml">
+<img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/Importantus/location-share/build.yml">
 <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/Importantus/location-share?include_prereleases">
 <img alt="GitHub" src="https://img.shields.io/github/license/Importantus/location-share">
 </p>
