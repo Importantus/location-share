@@ -58,4 +58,7 @@
     <string name="allow_location_access">Allow location access</string>
     <string name="allow_background_access">Allow background access</string>
     <string name="onboarding_continue">Continue</string>
+    <string name="welcome">Welcome!</string>
+    <string name="welcome_message">Nice to have you here! Here you can share your location with your friends (not Sundar Pichai).</string>
+    <string name="get_started">Let\'s go</string>
 </resources>
