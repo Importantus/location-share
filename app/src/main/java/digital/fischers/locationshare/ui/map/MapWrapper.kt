@@ -27,31 +27,14 @@ fun MapWrapper(
     onZoom: (Float) -> Unit = {},
     onPan: (Offset) -> Unit = {},
     onRotate: (Float) -> Unit = {},
+    onFriendClick: (String) -> Unit = {},
     screen: @Composable () -> Unit,
 ) {
-
-    val context = LocalContext.current
-
-    val gestureDetector =
-        GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
-            override fun onScroll(
-                e1: MotionEvent?,
-                e2: MotionEvent,
-                distanceX: Float,
-                distanceY: Float
-            ): Boolean {
-                Log.d("Gesture", "onScroll: $distanceX, $distanceY")
-                onPan(Offset(-distanceX, -distanceY))
-                return false
-            }
-        })
-
     Box(
         modifier = Modifier
             .fillMaxSize()
     ) {
         if (showMap) {
-            Log.d("Map", "Rebuilding map")
             Map(
                 userLocation = userLocation,
                 friends = friends,
@@ -59,12 +42,13 @@ fun MapWrapper(
                 onRotate = {
                     onRotate(it.toFloat())
                 },
+                onFriendClick = onFriendClick
             )
         }
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .pointerInteropFilter { motionEvent ->
+                .pointerInteropFilter { _ ->
                     false
                 }
                 .zIndex(1f)

@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.maplibre.android.geometry.LatLng
+import org.ramani.compose.CameraMotionType
 import org.ramani.compose.CameraPosition
 import javax.inject.Inject
 import kotlin.text.firstOrNull
@@ -72,12 +73,13 @@ class MainViewModel @Inject constructor(
 
 
     private val _locationPermissionState = MutableStateFlow<PermissionState?>(null)
-    private val locationPermissionState: StateFlow<PermissionState?> = _locationPermissionState.asStateFlow()
+    private val locationPermissionState: StateFlow<PermissionState?> =
+        _locationPermissionState.asStateFlow()
 
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            if(userRepository.isLoggedIn()) {
+            if (userRepository.isLoggedIn()) {
                 websocketRepository.connect()
             }
             userRepository.registerFcmToken()
@@ -183,7 +185,10 @@ class MainViewModel @Inject constructor(
                     Log.d("MainViewModel", "Tracking Friend: ${trackTargetValue.value}")
                     friendsList.firstOrNull { it.id == trackTargetValue.value }
                         ?.location?.let {
-                            Log.d("MainViewModel", "Friend location: ${it.latitude}, ${it.longitude}")
+                            Log.d(
+                                "MainViewModel",
+                                "Friend location: ${it.latitude}, ${it.longitude}"
+                            )
                             LatLng(it.latitude, it.longitude)
                         }
                 }
@@ -192,6 +197,7 @@ class MainViewModel @Inject constructor(
             },
             zoom = zoomValue.toDouble(),
             bearing = bearingValue,
+            motionType = if (trackTargetValue.type == TrackTargetType.USER_LOCATION) CameraMotionType.EASE else CameraMotionType.FLY
         )
     }.stateIn(
         scope = viewModelScope,

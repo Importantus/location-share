@@ -8,13 +8,17 @@ fun UserLocation(
     name: String,
     latLng: LatLng,
     accuracy: Float,
+    id: FriendId? = null,
+    onClick: (String) -> Unit = {}
 ) {
     val color = "#202020"
 
     Position(
         latLng = latLng,
         accuracy = accuracy,
-        color = color
+        color = color,
+        id = id,
+        onClick = onClick
     )
     TextWithBackground(
         text = name,

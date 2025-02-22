@@ -56,7 +56,8 @@ fun LocationShareApp(
             showMap = hasSeenOnboarding,
             userLocation = viewModel.userLocation,
             friends = viewModel.friends,
-            cameraPosition = viewModel.cameraPosition
+            cameraPosition = viewModel.cameraPosition,
+            onFriendClick = { id -> appState.navigateToFriend(id) }
         ) {
             NavHost(
                 navController = appState.navController,
@@ -74,7 +75,6 @@ fun LocationShareApp(
                         },
                         onSearchNavigation = {},
                         onFriendNavigation = { friendId ->
-                            viewModel.setCameraToTrackFriend(friendId)
                             appState.navigateToFriend(friendId)
                         }
                     )
@@ -91,6 +91,11 @@ fun LocationShareApp(
                 }
                 composable(Screen.Friend.route) {
                     val userId = it.arguments?.getString(Screen.ARG_USER_ID)
+                    LaunchedEffect(userId) {
+                        if (userId != null) {
+                            viewModel.setCameraToTrackFriend(userId)
+                        }
+                    }
                     if (userId != null) {
                         FriendScreen(
                             onBackNavigation = {
