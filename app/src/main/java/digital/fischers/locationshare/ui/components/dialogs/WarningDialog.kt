@@ -32,7 +32,7 @@ fun WarningDialog(
             TextButton(onClick = onCancel) {
                 Text(
                     color = MaterialTheme.colorScheme.onSurface,
-                    text = "Abbrechen"
+                    text = stringResource(R.string.cancel)
                 )
             }
         },

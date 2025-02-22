@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -55,7 +56,7 @@ fun HomeScreen(
         viewModel.syncFriendLocations()
     }
 
-    MapUI() {
+    MapUI {
         Column(
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
@@ -63,7 +64,7 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 ButtonRectangle(
-                    "Freund hinzufügen",
+                    stringResource(R.string.add_friend),
                     onFriendAddNavigation,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -135,7 +136,7 @@ fun FriendCard(
                         modifier = Modifier.size(16.dp)
                     )
                     Text(
-                        "Standort nicht mit dir geteilt",
+                        stringResource(R.string.location_not_shared),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 14.sp
                     )

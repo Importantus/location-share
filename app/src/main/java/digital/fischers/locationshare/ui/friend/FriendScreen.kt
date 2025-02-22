@@ -30,6 +30,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -75,7 +76,7 @@ fun FriendScreen(
         ) {
             Column {
                 if (friend == null) {
-                    Text("Lädt...")
+                    Text(stringResource(R.string.loading))
                 } else {
                     Column {
                         FriendCard(friend = friend!!, onClick = {
@@ -89,11 +90,13 @@ fun FriendScreen(
                                 .padding(16.dp, 12.dp)
                         ) {
                             if (friend!!.userShareId != null) {
-                                ButtonRectangle("Nicht mehr teilen", onClick = {
+                                ButtonRectangle(stringResource(R.string.stop_sharing), onClick = {
                                     showWarningDialog = true
                                 }, modifier = Modifier.fillMaxWidth())
                             } else {
-                                ButtonRectangle("Standort teilen", onClick = {
+                                ButtonRectangle(
+                                    stringResource(R.string.share_location_with),
+                                    onClick = {
                                     onAddShareNavigation()
                                 }, modifier = Modifier.fillMaxWidth())
                             }
@@ -107,8 +110,8 @@ fun FriendScreen(
     if (showWarningDialog) {
         WarningDialog(
             title = "Möchtest du die Freigabe löschen?",
-            description = "Möchtest du aufhören, deinen Standort mit ${friend?.name} zu teilen? Du kannst die Freigabe jederzeit wieder erneuern.",
-            confirmText = "Bestätigen",
+            description = stringResource(R.string.confirm_stop_sharing, friend?.name ?: ""),
+            confirmText = stringResource(R.string.confirm),
             onConfirm = {
                 coroutineScope.launch(Dispatchers.IO) {
                     viewModel.stopSharing(friend!!)
@@ -165,11 +168,14 @@ fun FriendCard(
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Text(
-                        if (friend.distance != null) String.format(
+                        if (friend.distance != null)
+                            stringResource(
+                                R.string.km_away, String.format(
                             Locale.getDefault(),
                             "%.2f",
                             friend.distance / 1000
-                        ) + " km entfernt" else "lädt...",
+                                )
+                            ) else stringResource(R.string.loading),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 14.sp
                     )

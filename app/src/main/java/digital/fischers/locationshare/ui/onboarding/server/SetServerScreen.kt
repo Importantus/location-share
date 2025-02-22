@@ -13,9 +13,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import digital.fischers.locationshare.R
 import digital.fischers.locationshare.ui.components.buttons.ButtonRectangle
 import digital.fischers.locationshare.ui.components.inputs.TextFieldDefault
 import digital.fischers.locationshare.ui.components.screens.BaseScreen
@@ -39,14 +41,14 @@ fun SetServerScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Wähle deinen Server.",
+                text = stringResource(R.string.choose_server),
                 style = MaterialTheme.typography.headlineLarge,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .widthIn(min = 48.dp, max = 330.dp)
             )
             Text(
-                text = "Du musst einen Server auswählen. Den kannst du selber hosten, oder du benutzt den Server eines Freundes.",
+                text = stringResource(R.string.choose_server_desc),
                 modifier = Modifier
                     .widthIn(min = 48.dp, max = 330.dp)
                     .padding(top = 8.dp, bottom = 16.dp),
@@ -60,7 +62,7 @@ fun SetServerScreen(
             ) {
                 TextFieldDefault(
                     value = viewModel.serverUrl,
-                    label = "Server URL",
+                    label = stringResource(R.string.server_url),
                     placeholder = "https://",
                     onValueChange = viewModel::onServerUrlChanged,
                     loading = loading
@@ -70,7 +72,7 @@ fun SetServerScreen(
             if (validServerUrl) {
                 Box(modifier = Modifier.widthIn(min = 48.dp, max = 330.dp)) {
                     ButtonRectangle(
-                        "Nächster Schritt",
+                        stringResource(R.string.next_step),
                         onClick = {
                             coroutineScope.launch {
                                 viewModel.saveServerUrl(viewModel.serverUrl)

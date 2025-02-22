@@ -17,9 +17,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import digital.fischers.locationshare.R
 import digital.fischers.locationshare.data.remote.APIResult
 import digital.fischers.locationshare.ui.components.buttons.ButtonRectangle
 import digital.fischers.locationshare.ui.components.inputs.PasswordField
@@ -58,12 +60,12 @@ fun RegistrationScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Registrieren.",
+                text = stringResource(R.string.register),
                 style = MaterialTheme.typography.headlineLarge,
                 textAlign = TextAlign.Center,
             )
             Text(
-                text = "Noch keinen Account? Hier kannst du dich registrieren.",
+                text = stringResource(R.string.register_here),
                 modifier = Modifier
                     .padding(top = 8.dp, bottom = 16.dp),
                 style = MaterialTheme.typography.bodySmall,
@@ -78,7 +80,7 @@ fun RegistrationScreen(
                         .padding(8.dp)
                 ) {
                     Text(
-                        text = "Die Registrierung ist fehlgeschlagen. Bitte versuche es erneut.",
+                        text = stringResource(R.string.registration_failed),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -92,36 +94,36 @@ fun RegistrationScreen(
                 if (serverInfo?.public_registration == false) {
                     TextFieldDefault(
                         value = registrationSecret,
-                        label = "Registrierungscode",
+                        label = stringResource(R.string.registration_code),
                         placeholder = "123456",
                         onValueChange = viewModel::onRegistrationSecretChanged
                     )
                 }
                 TextFieldDefault(
                     value = name,
-                    label = "Name",
+                    label = stringResource(R.string.name),
                     placeholder = "Max",
                     onValueChange = viewModel::onNameChanged
                 )
                 TextFieldDefault(
                     value = username,
-                    label = "Nutzername",
-                    placeholder = "diter67",
+                    label = stringResource(R.string.username),
+                    placeholder = "dieter67",
                     onValueChange = viewModel::onUsernameChanged
                 )
                 TextFieldDefault(
                     value = email,
-                    label = "Emailadresse",
+                    label = stringResource(R.string.email),
                     placeholder = "dieter67@example.com",
                     onValueChange = viewModel::onEmailChanged
                 )
                 PasswordField(
                     value = password,
-                    label = "Passwort",
+                    label = stringResource(R.string.password),
                     onValueChange = viewModel::onPasswordChanged,
                 )
                 ButtonRectangle(
-                    "Registrieren",
+                    stringResource(R.string.register),
                     onClick = {
                         coroutineScope.launch {
                             val result = viewModel.register()

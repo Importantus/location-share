@@ -11,12 +11,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import digital.fischers.locationshare.R
 import digital.fischers.locationshare.ui.components.buttons.ButtonRectangle
 import digital.fischers.locationshare.ui.components.screens.BaseScreen
 import kotlinx.coroutines.launch
@@ -50,9 +52,12 @@ fun PermissionsScreen(
         }
 
     val descriptionText = when (highestPermissionState?.permission) {
-        android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION -> "Super! Wir haben Zugriff auf deinen Standort, wenn die App geöffnet ist. Aber um deinen Standort auch im Hintergrund erfassen und teilen zu können, benötigen wir auch die Berechtigung, deinen Standort im Hintergrund zu ermitteln."
-        android.Manifest.permission.ACCESS_BACKGROUND_LOCATION -> "Alles erledigt! Wir haben Zugriff auf deinen Standort im Hintergrund und wenn die App geöffnet ist."
-        else -> "Wir brauchen die Berechtigung, deinen genauen Standort zu ermitteln, wenn die App geöffnet ist. Dieser Standort wird nur verwendet, um ihn auf der Karte anzuzeigen."
+        android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION -> stringResource(
+            R.string.background_permission_desc
+        )
+
+        android.Manifest.permission.ACCESS_BACKGROUND_LOCATION -> stringResource(R.string.all_set)
+        else -> stringResource(R.string.permission_desc)
     }
 
     val coroutineScope = rememberCoroutineScope()
@@ -65,9 +70,12 @@ fun PermissionsScreen(
         ) {
             Text(
                 text = when (highestPermissionState?.permission) {
-                    android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION -> "Wir brauchen deine Erlaubnis!"
-                    android.Manifest.permission.ACCESS_BACKGROUND_LOCATION -> "Erlaubnis erteilt!"
-                    else -> "Wir brauchen deine Erlaubnis!"
+                    android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION -> stringResource(
+                        R.string.background_permission_desc
+                    )
+
+                    android.Manifest.permission.ACCESS_BACKGROUND_LOCATION -> stringResource(R.string.permission_granted)
+                    else -> stringResource(R.string.we_need_permission)
                 },
                 style = MaterialTheme.typography.headlineLarge,
                 textAlign = TextAlign.Center,
@@ -85,14 +93,14 @@ fun PermissionsScreen(
             when (highestPermissionState?.permission) {
                 android.Manifest.permission.ACCESS_BACKGROUND_LOCATION -> {
                     ButtonRectangle(
-                        "Weiter geht's",
+                        stringResource(R.string.onboarding_continue),
                         onClick = onNextNavigation
                     )
                 }
 
                 android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION -> {
                     ButtonRectangle(
-                        "Hintergrund Zugriff erlauben",
+                        stringResource(R.string.allow_background_access),
                         onClick = {
                             coroutineScope.launch {
                                 accessBackgroundLocationPermission.launchPermissionRequest()
@@ -103,7 +111,7 @@ fun PermissionsScreen(
 
                 else -> {
                     ButtonRectangle(
-                        "Standortzugriff erlauben",
+                        stringResource(R.string.allow_location_access),
                         onClick = {
                             coroutineScope.launch {
                                 accessFineLocationPermission.launchPermissionRequest()

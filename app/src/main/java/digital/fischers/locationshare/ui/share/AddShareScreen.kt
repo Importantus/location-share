@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -70,7 +71,7 @@ fun AddShareScreen(
                     verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     Text(
-                        "Teile deinen Standort",
+                        stringResource(R.string.share_location),
                         style = TextStyle(
                             fontSize = 18.sp
                         ),
@@ -86,7 +87,11 @@ fun AddShareScreen(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                "Für " + viewModel.hoursToShare + " Stunde" + if (viewModel.hoursToShare > 1) "n" else "",
+                                stringResource(
+                                    R.string.for_hours,
+                                    viewModel.hoursToShare,
+                                    if (viewModel.hoursToShare > 1) "n" else ""
+                                ),
                                 color = MaterialTheme.colorScheme.onSurface,
                                 style = TextStyle(
                                     fontSize = 14.sp,
@@ -102,7 +107,7 @@ fun AddShareScreen(
                                         painterResource(R.drawable.icon_minus),
                                         tint = MaterialTheme.colorScheme.onSurface,
                                         modifier = Modifier.size(12.dp),
-                                        contentDescription = "Minus"
+                                        contentDescription = stringResource(R.string.minus)
                                     )
                                 }, onClick = { viewModel.decreaseHoursToShare() })
                                 ButtonSmallRectangle(icon = {
@@ -110,7 +115,7 @@ fun AddShareScreen(
                                         painterResource(R.drawable.icon_plus),
                                         tint = MaterialTheme.colorScheme.onSurface,
                                         modifier = Modifier.size(12.dp),
-                                        contentDescription = "Plus"
+                                        contentDescription = stringResource(R.string.plus)
                                     )
                                 }, onClick = { viewModel.increaseHoursToShare() })
                             }
@@ -120,7 +125,8 @@ fun AddShareScreen(
                         viewModel.share.valid_until == null,
                         onClick = { viewModel.setNeverExpire() }) {
                         Text(
-                            "Bis zur Deaktivierung", color = MaterialTheme.colorScheme.onSurface,
+                            stringResource(R.string.until_deactivation),
+                            color = MaterialTheme.colorScheme.onSurface,
                             style = TextStyle(
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Normal
@@ -138,7 +144,7 @@ fun AddShareScreen(
                     verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     Text(
-                        "Menschen auf deinem Server",
+                        stringResource(R.string.people_on_your_server),
                         style = TextStyle(
                             fontSize = 18.sp
                         ),
@@ -162,7 +168,7 @@ fun AddShareScreen(
                     } else if (viewModel.usersLoadError == null) {
                         if (viewModel.users.isEmpty()) {
                             Text(
-                                "Du hast deinen Standort bereits mit allen Menschen auf deinem Server geteilt.",
+                                stringResource(R.string.already_shared),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 style = MaterialTheme.typography.bodySmall
                             )
@@ -194,13 +200,13 @@ fun AddShareScreen(
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         ButtonRectangle(
-                            text = "Abbrechen",
+                            text = stringResource(R.string.cancel),
                             onClick = { onBackNavigation() },
                             modifier = Modifier.weight(1f),
                             layout = ButtonLayout.SMALL
                         )
                         ButtonRectangle(
-                            text = "Erstellen",
+                            text = stringResource(R.string.create),
                             onClick = {
                                 coroutineScope.launch {
                                     viewModel.createShare()
