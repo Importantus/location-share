@@ -94,7 +94,7 @@ fun WelcomeScreen(
                     .widthIn(min = 48.dp, max = 330.dp)
                     .padding(top = 8.dp)
                     .alpha(alphaText2),
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center
             )
             Box(

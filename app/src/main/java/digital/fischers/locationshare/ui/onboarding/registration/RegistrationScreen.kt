@@ -51,7 +51,9 @@ fun RegistrationScreen(
 
     BackHandler { onNavigateBack() }
 
-    BaseScreen {
+    BaseScreen(
+        isLoading = loading
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -68,7 +70,7 @@ fun RegistrationScreen(
                 text = stringResource(R.string.register_here),
                 modifier = Modifier
                     .padding(top = 8.dp, bottom = 16.dp),
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center
             )
             if (error != null) {

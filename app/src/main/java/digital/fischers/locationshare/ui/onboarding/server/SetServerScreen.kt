@@ -52,7 +52,7 @@ fun SetServerScreen(
                 modifier = Modifier
                     .widthIn(min = 48.dp, max = 330.dp)
                     .padding(top = 8.dp, bottom = 16.dp),
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center
             )
             Box(

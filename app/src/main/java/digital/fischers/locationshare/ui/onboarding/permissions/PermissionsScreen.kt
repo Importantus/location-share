@@ -71,7 +71,7 @@ fun PermissionsScreen(
             Text(
                 text = when (highestPermissionState?.permission) {
                     android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION -> stringResource(
-                        R.string.background_permission_desc
+                        R.string.we_need_permission
                     )
 
                     android.Manifest.permission.ACCESS_BACKGROUND_LOCATION -> stringResource(R.string.permission_granted)
@@ -87,7 +87,7 @@ fun PermissionsScreen(
                 modifier = Modifier
                     .widthIn(min = 48.dp, max = 330.dp)
                     .padding(top = 8.dp, bottom = 16.dp),
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center
             )
             when (highestPermissionState?.permission) {

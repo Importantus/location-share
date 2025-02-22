@@ -170,7 +170,7 @@ fun AddShareScreen(
                             Text(
                                 stringResource(R.string.already_shared),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                style = MaterialTheme.typography.bodySmall
+                                style = MaterialTheme.typography.bodyMedium
                             )
                         }
                         LazyRow(
