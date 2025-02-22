@@ -24,7 +24,7 @@ fun Position(
         vertices = createCircleFromPolygon(latLng, accuracy),
         isDraggable = false,
         fillColor = color,
-        opacity = 0.4F,
+        opacity = 0.2F,
         borderColor = "transparent",
         zIndex = 1,
     )

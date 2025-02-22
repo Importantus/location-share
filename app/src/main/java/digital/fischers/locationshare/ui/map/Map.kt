@@ -64,7 +64,8 @@ fun Map(
             Position(
                 latLng = LatLng(it.latitude, it.longitude),
                 accuracy = it.accuracy,
-                color = if (isOlderThan1Minute) MaterialTheme.colorScheme.onBackground.toHexString() else MaterialTheme.colorScheme.primary.toHexString()
+                color = if (isOlderThan1Minute) MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
+                    .toHexString() else MaterialTheme.colorScheme.primary.toHexString()
             )
         }
 
