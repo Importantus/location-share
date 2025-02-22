@@ -64,6 +64,8 @@ fun FriendScreen(
 
     MapUI(
         isLoading = removeShareLoading,
+        error = viewModel.refreshLoadingError ?: viewModel.removeShareLoadingError,
+        onErrorConfirm = { viewModel.clearErrors() },
         appbar = {
             CustomAppBar(onBackNavigation)
         }
@@ -132,8 +134,7 @@ fun FriendCard(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Column(
-        ) {
+        Column {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
