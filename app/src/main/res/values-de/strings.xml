@@ -15,6 +15,7 @@
     <string name="time_format">um %1$s Uhr</string>
     <string name="date_format">am %1$s</string>
     <string name="last_sync">Letzte Synchronisierung:</string>
+    <string name="yesterday">gestern</string>
     <string name="yesterday_time_format">Gestern um %1$s Uhr</string>
     <string name="just_now">gerade eben</string>
     <string name="share_location">Teile deinen Standort</string>

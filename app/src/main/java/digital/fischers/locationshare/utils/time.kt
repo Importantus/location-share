@@ -40,14 +40,17 @@ fun getTimeDifference(timestamp: Long, context: Context): String {
     return when {
         minutes < 1 -> context.getString(R.string.just_now)
         minutes < 60 -> context.getString(R.string.minutes_ago, minutes)
-        timestamp > yesterday.timeInMillis && timestamp < calendar.apply {
+        timestamp > yesterday.timeInMillis -> context.getString(
+            R.string.time_format,
+            getTime(timestamp)
+        )
+
+        timestamp > calendar.apply {
             add(
                 Calendar.DAY_OF_MONTH,
                 -2
             )
-        }.timeInMillis -> context.getString(R.string.time_format, getTime(timestamp))
-
-        timestamp > calendar.apply { add(Calendar.DAY_OF_MONTH, -2) }.timeInMillis -> "Gestern"
+        }.timeInMillis -> context.getString(R.string.yesterday)
         else -> context.getString(R.string.date_format, getDate(timestamp))
     }
 }
