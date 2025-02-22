@@ -44,13 +44,13 @@ fun CustomErrorAlert(
 
     AlertDialog(
         onDismissRequest = {},
-        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
         shape = MaterialTheme.shapes.large,
         confirmButton = {
             TextButton(onClick = onConfirm) {
                 Text(
                     stringResource(id = R.string.ok),
-                    color = MaterialTheme.colorScheme.error
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
         },
