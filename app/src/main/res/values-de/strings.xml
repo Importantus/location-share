@@ -59,7 +59,7 @@
     <string name="allow_location_access">Standortzugriff erlauben</string>
     <string name="allow_background_access">Hintergrund Zugriff erlauben</string>
     <string name="onboarding_continue">Weiter geht\'s</string>
-    <string name="welcome">Welcome!</string>
-    <string name="welcome_message">Nice to have you here! Here you can share your location with your friends (not Sundar Pichai).</string>
-    <string name="get_started">Let\'s go</string>
+    <string name="welcome">Willkommen!</string>
+    <string name="welcome_message">Schön, dass du da bist! Hier kannst du deinen Standort mit deinen Freunden teilen (nicht Sundar Pichai).</string>
+    <string name="get_started">Los geht\'s</string>
 </resources>
