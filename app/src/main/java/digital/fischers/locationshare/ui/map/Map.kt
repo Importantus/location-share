@@ -1,21 +1,14 @@
 package digital.fischers.locationshare.ui.map
 
-import android.annotation.SuppressLint
 import android.location.Location
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.zIndex
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import digital.fischers.locationshare.domain.types.FriendUIState
 import digital.fischers.locationshare.ui.map.components.FriendId
 import digital.fischers.locationshare.ui.map.components.Position
@@ -23,10 +16,8 @@ import digital.fischers.locationshare.ui.map.components.UserLocation
 import digital.fischers.locationshare.utils.toHexString
 import kotlinx.coroutines.flow.StateFlow
 import org.maplibre.android.geometry.LatLng
-import org.maplibre.android.location.modes.CameraMode
 import org.maplibre.android.maps.Style
 import org.ramani.compose.CameraPosition
-import org.ramani.compose.LocationRequestProperties
 import org.ramani.compose.LocationStyling
 import org.ramani.compose.MapLibre
 import org.ramani.compose.MapObserver
@@ -44,7 +35,7 @@ fun Map(
 ) {
     val friendsState by friends.collectAsState()
     val cameraPositionState by cameraPosition.collectAsState()
-    //val userLocationState by userLocation.collectAsState()
+    val userLocationState by userLocation.collectAsState()
 
 
     MapLibre(
@@ -67,15 +58,15 @@ fun Map(
             onMapRotated = onRotate
         )
 
-//
-//        userLocationState?.let {
-//            val isOlderThan1Minute = it.time < System.currentTimeMillis() - 60 * 1000
-//            Position(
-//                latLng = LatLng(it.latitude, it.longitude),
-//                accuracy = it.accuracy,
-//                color = if (isOlderThan1Minute) MaterialTheme.colorScheme.onBackground.toHexString() else MaterialTheme.colorScheme.primary.toHexString()
-//            )
-//        }
+
+        userLocationState?.let {
+            val isOlderThan1Minute = it.time < System.currentTimeMillis() - 60 * 1000
+            Position(
+                latLng = LatLng(it.latitude, it.longitude),
+                accuracy = it.accuracy,
+                color = if (isOlderThan1Minute) MaterialTheme.colorScheme.onBackground.toHexString() else MaterialTheme.colorScheme.primary.toHexString()
+            )
+        }
 
         friendsState.filter { it.location != null }.forEach { friend ->
             friend.location?.let {

@@ -1,8 +1,16 @@
 [versions]
-agp = "8.6.1"
-kotlin = "1.9.23"
-coreKtx = "1.15.0"
+# Gemeinsame Versionen
+agp = "8.8.1"                           # Android Gradle Plugin (früher android-gradle-plugin)
+kotlin = "2.0.20"                         # Gemeinsame Kotlin-Version (für kotlin, kotlin-gradle-plugin und compose-compiler)
+ksp = "2.0.21-1.0.27"
+coreKtx = "1.15.0"                        # AndroidX Core KTX
+compose-ui = "1.7.8"                      # Compose UI Version (für Foundation, Material etc.)
+kotlinx-coroutines-android = "1.8.0"
+maplibre-android-sdk = "11.8.1"
+maplibre-android-plugin-annotation = "3.0.2"
 junit = "4.13.2"
+
+# Zusätzliche Versionen aus dem Root-Catalog
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
@@ -32,9 +40,22 @@ ramaniMaplibre = "0.9.0"
 accompanistPermissions = "0.37.0"
 firebaseMessaging = "24.1.0"
 
+# Für Kotlin-spezifische Plugins (Parcelize und Gradle Plugin) – hier an den Kotlin-Wert gekoppelt
+kotlin-parcelize = "1.9.23"
+kotlin-gradle-plugin = "1.9.23"
+
 [libraries]
+android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
+androidx-compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compose-ui" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "compose-ui" }
+androidx-material = { group = "androidx.compose.material", name = "material", version.ref = "compose-ui" }
+kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinx-coroutines-android" }
+maplibre-android-sdk = { group = "org.maplibre.gl", name = "android-sdk", version.ref = "maplibre-android-sdk" }
+maplibre-android-plugin-annotation = { group = "org.maplibre.gl", name = "android-plugin-annotation-v9", version.ref = "maplibre-android-plugin-annotation" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
@@ -72,7 +93,10 @@ accompanist-permissions = { group = "com.google.accompanist", name = "accompanis
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebaseMessaging" }
 
 [plugins]
-android-application = { id = "com.android.application", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+android-library = { id = "com.android.library", version.ref = "agp" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin-parcelize" }
+android-application = { id = "com.android.application", version.ref = "agp" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 

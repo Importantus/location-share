@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.compose.compiler)
 //    alias(libs.plugins.compose.compiler)
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
@@ -95,12 +96,13 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.datastore.preferences)
-    implementation(libs.ramani.maplibre)
     implementation(libs.accompanist.permissions)
 
     //|||||||||||||||||||||||||||||||||||||
     implementation(libs.firebase.messaging) // <-- The enemy! To be replaced with unified push eventually
     //|||||||||||||||||||||||||||||||||||||
+
+    implementation(project(":ramani-maplibre"))
 
     ksp(libs.androidx.room.compiler)
     kapt(libs.hilt.compiler)

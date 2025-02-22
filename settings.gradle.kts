@@ -20,5 +20,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Location Share"
-include(":app")
- 
+include(":app", ":ramani-maplibre")
