@@ -29,7 +29,7 @@
     <string name="loading">Lädt…</string>
     <string name="add_friend">Freund hinzufügen</string>
     <string name="location_not_shared">Standort nicht mit dir geteilt</string>
-    <string name="km_away">%.2f km entfernt</string>
+    <string name="km_away">%s km entfernt</string>
     <string name="refresh">Aktualisieren</string>
     <string name="stop_sharing">Nicht mehr teilen</string>
     <string name="share_location_with">Standort teilen mit</string>

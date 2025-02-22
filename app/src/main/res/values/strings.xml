@@ -28,7 +28,7 @@
     <string name="loading">Loading…</string>
     <string name="add_friend">Add Friend</string>
     <string name="location_not_shared">Location not shared with you</string>
-    <string name="km_away">%.2f km away</string>
+    <string name="km_away">%s km away</string>
     <string name="refresh">Refresh</string>
     <string name="stop_sharing">Stop sharing</string>
     <string name="share_location_with">Share location with</string>
