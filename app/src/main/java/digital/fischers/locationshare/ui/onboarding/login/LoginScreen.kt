@@ -74,14 +74,15 @@ fun LoginScreen(
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(10.dp))
-                        .background(MaterialTheme.colorScheme.error)
+                        .background(MaterialTheme.colorScheme.primary)
                         .widthIn(min = 48.dp, max = 330.dp)
-                        .padding(8.dp)
+                        .fillMaxWidth()
+                        .padding(12.dp)
                 ) {
                     Text(
                         text = stringResource(R.string.login_failed),
                         style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
             }
